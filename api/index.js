@@ -11,9 +11,7 @@ const ws = require('ws');
 const fs = require('fs');
 
 dotenv.config();
-mongoose.connect(process.env.MONGO_URL, (err) => {
-  if (err) throw err;
-});
+mongoose.connect(process.env.MONGO_URL);
 const jwtSecret = process.env.JWT_SECRET;
 const bcryptSalt = bcrypt.genSaltSync(10);
 
@@ -21,10 +19,12 @@ const app = express();
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
+const corsOptions = {
+  origin: 'http://localhost:5173',
   credentials: true,
-  origin:process.env.CLIENT_URL,
-}));
+};
+
+app.use(cors(corsOptions));
 
 async function getUserDataFromRequest(req) {
   return new Promise((resolve, reject) => {
